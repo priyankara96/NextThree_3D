@@ -1,0 +1,63 @@
+.three-section {
+  width: 100vw;
+  min-height: 100vh;
+  background: #fff;
+}
+
+.three-canvas-bg {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw; height: 100vh;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.three-scroll-container {
+  width: 100vw;
+  height: 100vh;
+  overflow-y: scroll;
+  scroll-snap-type: y mandatory;
+  z-index: 2;
+}
+
+.three-slide {
+  scroll-snap-align: start;
+  padding: 0;
+}
+
+.three-overlay.left {
+  justify-content: flex-start;
+}
+.three-overlay.right {
+  justify-content: flex-end;
+}
+
+.slide-heading {
+  font-size: 4vw;
+  font-weight: 600;
+  margin-bottom: 1vw;
+}
+.slide-desc {
+  font-size: 1.4vw;
+  font-weight: 400;
+  margin-bottom: 2vw;
+  max-width: 40vw;
+}
+.slide-btn {
+  display: inline-block;
+  background: #1bd9de;
+  color: #222;
+  border-radius: 14px;
+  font-size: 1.2vw;
+  font-weight: 500;
+  padding: 0.8vw 2vw;
+  margin-top: 1vw;
+  text-decoration: none;
+  transition: background 0.15s;
+  box-shadow: 0 4px 16px #0001;
+  border: 2px solid #12d7e0;
+}
+.slide-btn:hover {
+  background: #12d7e0;
+  color: #fff;
+}
