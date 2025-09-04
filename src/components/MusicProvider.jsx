@@ -11,21 +11,23 @@ export function MusicProvider({ children }) {
   const audioRef = useRef(null);
   const [isMuted, setIsMuted] = useState(true);
 
+  // This now controls all audio muting on the site!
   const toggleMute = () => {
-    const audio = audioRef.current;
-    if (!audio) return;
-
-    if (isMuted) {
-      audio.muted = false;
-      audio.play().catch(() => {});
-    } else {
-      audio.muted = true;
-    }
-    setIsMuted(!isMuted);
+    setIsMuted((prev) => {
+      const newMuted = !prev;
+      if (audioRef.current) {
+        audioRef.current.muted = newMuted;
+        if (!newMuted) {
+          audioRef.current.play().catch(() => {});
+        }
+      }
+      return newMuted;
+    });
   };
 
   return (
     <MusicContext.Provider value={{ isMuted, toggleMute }}>
+      {/* The main background music */}
       <audio
         ref={audioRef}
         src="/assets/soundtrack.mp3"

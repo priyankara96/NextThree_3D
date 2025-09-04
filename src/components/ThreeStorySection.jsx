@@ -4,9 +4,10 @@ import React, { useRef, useLayoutEffect, useState } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { OrbitControls, useGLTF } from "@react-three/drei";
 import { useSpring, a } from "@react-spring/three";
+import { useMusic } from "./MusicProvider";
 import "./ThreeStorySection.css";
 
-// All steps: camera, target, overlay
+// Camera steps array
 const STEPS = [
   {
     camera: { position: [-9.25, 2.5, -2.38], fov: 50 },
@@ -40,16 +41,19 @@ const STEPS = [
   },
 ];
 
+// Linear interpolation for smooth transition
 function lerp(a, b, t) {
   return a.map((v, i) => v + (b[i] - v) * t);
 }
 
+// Car model loader
 function CarModel() {
   const { scene } = useGLTF("/models/car.glb");
   return <primitive object={scene} />;
 }
 useGLTF.preload("/models/car.glb");
 
+// Camera animation for scroll
 function AnimatedCamera({ cameraPos, orbitTarget }) {
   const { camera } = useThree();
   useFrame(() => {
@@ -61,6 +65,22 @@ function AnimatedCamera({ cameraPos, orbitTarget }) {
 }
 
 export default function ThreeStorySection() {
+  // Use global mute state from MusicProvider
+  const { isMuted } = useMusic();
+
+  // Ref for button hover sound
+  const slideBtnHoverRef = useRef(null);
+
+  // Play hover sound if not muted
+  const handleSlideBtnMouseEnter = () => {
+    if (isMuted) return; // Only play if NOT muted!
+    const audio = slideBtnHoverRef.current;
+    if (audio) {
+      audio.currentTime = 0;
+      audio.play();
+    }
+  };
+
   // Track scroll position
   const [scrollT, setScrollT] = useState(0);
   const sectionRef = useRef();
@@ -115,7 +135,7 @@ export default function ThreeStorySection() {
           width: "100vw",
           height: "100vh",
           zIndex: 1,
-          pointerEvents: "none", // so overlays/buttons on slides still work
+          pointerEvents: "none", // overlays/buttons on slides still work
         }}
       >
         <Canvas camera={{ position: cameraPosArr, fov: 50 }}>
@@ -192,12 +212,20 @@ export default function ThreeStorySection() {
               <h1 className="slide-heading">{step.overlay.heading}</h1>
               <p className="slide-desc">{step.overlay.desc}</p>
               {idx === 1 && (
-                <a className="slide-btn" href="#what-we-do">
+                <a
+                  className="slide-btn"
+                  href="#what-we-do"
+                  onMouseEnter={handleSlideBtnMouseEnter}
+                >
                   What We Do →
                 </a>
               )}
               {idx === 2 && (
-                <a className="slide-btn" href="#donate">
+                <a
+                  className="slide-btn"
+                  href="#donate"
+                  onMouseEnter={handleSlideBtnMouseEnter}
+                >
                   Donate Us →
                 </a>
               )}
@@ -205,6 +233,12 @@ export default function ThreeStorySection() {
           </div>
         ))}
       </div>
+      {/* Slide button hover sound effect */}
+      <audio
+        ref={slideBtnHoverRef}
+        src="/assets/button-hover-click.wav"
+        preload="auto"
+      />
     </section>
   );
 }
