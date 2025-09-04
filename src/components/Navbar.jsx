@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useRef } from "react";
 import { useMusic } from "./MusicProvider";
+import { usePathname } from "next/navigation";
 import "./Navbar.css";
 
 export default function Navbar() {
@@ -12,6 +13,9 @@ export default function Navbar() {
   // Refs for hover and click sounds
   const navBtnHoverRef = useRef(null);
   const navBtnClickRef = useRef(null);
+
+  // Get current path
+  const pathname = usePathname();
 
   // Play hover sound if not muted
   const handleNavBtnMouseEnter = () => {
@@ -33,9 +37,25 @@ export default function Navbar() {
     }
   };
 
+  const navLinks = [
+    { href: "/", label: "Home" },
+    { href: "/about-us/", label: "About Chitra Lane" },
+    { href: "/donate/", label: "Donate Here" },
+    { href: "/what-we-do/", label: "What We Do" },
+    { href: "/online-education/", label: "Online Education Program" },
+    { href: "/shop/", label: "Shop" },
+    { href: "/contact/", label: "Contact Us" },
+  ];
+
+  // Helper to check active state (handles trailing slashes)
+  const isActive = (href) => {
+    if (href === "/") return pathname === "/";
+    // Compare both with and without trailing slash for robustness
+    return pathname === href || pathname === href.replace(/\/$/, "");
+  };
+
   return (
     <nav className="navbar">
-      {/* Left Section: Logo + Title */}
       <div
         className="navbar-left"
         onMouseEnter={handleNavBtnMouseEnter}
@@ -49,58 +69,17 @@ export default function Navbar() {
           />
         </Link>
       </div>
-
-      {/* Navigation Links */}
       <ul className="navbar-links">
-        <li
-          className="navbar-link active"
-          onMouseEnter={handleNavBtnMouseEnter}
-          onClick={handleNavBtnClick}
-        >
-          <Link href="/">Home</Link>
-        </li>
-        <li
-          className="navbar-link"
-          onMouseEnter={handleNavBtnMouseEnter}
-          onClick={handleNavBtnClick}
-        >
-          <Link href="/about-us/">About Chitra Lane</Link>
-        </li>
-        <li
-          className="navbar-link"
-          onMouseEnter={handleNavBtnMouseEnter}
-          onClick={handleNavBtnClick}
-        >
-          <Link href="/donate/">Donate Here</Link>
-        </li>
-        <li
-          className="navbar-link"
-          onMouseEnter={handleNavBtnMouseEnter}
-          onClick={handleNavBtnClick}
-        >
-          <Link href="/what-we-do/">What We Do</Link>
-        </li>
-        <li
-          className="navbar-link"
-          onMouseEnter={handleNavBtnMouseEnter}
-          onClick={handleNavBtnClick}
-        >
-          <Link href="/online-education/">Online Education Program</Link>
-        </li>
-        <li
-          className="navbar-link"
-          onMouseEnter={handleNavBtnMouseEnter}
-          onClick={handleNavBtnClick}
-        >
-          <Link href="/shop/">Shop</Link>
-        </li>
-        <li
-          className="navbar-link"
-          onMouseEnter={handleNavBtnMouseEnter}
-          onClick={handleNavBtnClick}
-        >
-          <Link href="/contact/">Contact Us</Link>
-        </li>
+        {navLinks.map((link) => (
+          <li
+            key={link.href}
+            className={`navbar-link${isActive(link.href) ? " active" : ""}`}
+            onMouseEnter={handleNavBtnMouseEnter}
+            onClick={handleNavBtnClick}
+          >
+            <Link href={link.href}>{link.label}</Link>
+          </li>
+        ))}
         <li onMouseEnter={handleNavBtnMouseEnter} onClick={handleNavBtnClick}>
           <span className="navbar-search" role="img" aria-label="search">
             🔍
