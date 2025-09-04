@@ -23,7 +23,7 @@ export default function Navbar() {
           <Link href="/">Home</Link>
         </li>
         <li className="navbar-link">
-          <Link href="/about-us">About Chitra Lane</Link>
+          <Link href="/about-us/">About Chitra Lane</Link>
         </li>
         <li className="navbar-link">
           <Link href="/donate">Donate Here</Link>
