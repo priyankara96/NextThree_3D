@@ -71,35 +71,35 @@ export default function Navbar() {
           onMouseEnter={handleNavBtnMouseEnter}
           onClick={handleNavBtnClick}
         >
-          <Link href="/donate">Donate Here</Link>
+          <Link href="/donate/">Donate Here</Link>
         </li>
         <li
           className="navbar-link"
           onMouseEnter={handleNavBtnMouseEnter}
           onClick={handleNavBtnClick}
         >
-          <Link href="/what-we-do">What We Do</Link>
+          <Link href="/what-we-do/">What We Do</Link>
         </li>
         <li
           className="navbar-link"
           onMouseEnter={handleNavBtnMouseEnter}
           onClick={handleNavBtnClick}
         >
-          <Link href="/online-education">Online Education Program</Link>
+          <Link href="/online-education/">Online Education Program</Link>
         </li>
         <li
           className="navbar-link"
           onMouseEnter={handleNavBtnMouseEnter}
           onClick={handleNavBtnClick}
         >
-          <Link href="/shop">Shop</Link>
+          <Link href="/shop/">Shop</Link>
         </li>
         <li
           className="navbar-link"
           onMouseEnter={handleNavBtnMouseEnter}
           onClick={handleNavBtnClick}
         >
-          <Link href="/contact">Contact Us</Link>
+          <Link href="/contact/">Contact Us</Link>
         </li>
         <li onMouseEnter={handleNavBtnMouseEnter} onClick={handleNavBtnClick}>
           <span className="navbar-search" role="img" aria-label="search">

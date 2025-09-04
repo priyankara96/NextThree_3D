@@ -1,7 +1,9 @@
-import React from 'react'
+import React from "react";
 
 export default function page() {
   return (
-    <div>page</div>
-  )
+    <div>
+      <h1 style={{ padding: "200px 100px 100px 100px" }}>Donate</h1>
+    </div>
+  );
 }
