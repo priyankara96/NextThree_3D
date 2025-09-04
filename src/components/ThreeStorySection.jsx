@@ -68,13 +68,24 @@ export default function ThreeStorySection() {
   // Use global mute state from MusicProvider
   const { isMuted } = useMusic();
 
-  // Ref for button hover sound
+  // Refs for hover and click sounds
   const slideBtnHoverRef = useRef(null);
+  const slideBtnClickRef = useRef(null);
 
   // Play hover sound if not muted
   const handleSlideBtnMouseEnter = () => {
-    if (isMuted) return; // Only play if NOT muted!
+    if (isMuted) return;
     const audio = slideBtnHoverRef.current;
+    if (audio) {
+      audio.currentTime = 0;
+      audio.play();
+    }
+  };
+
+  // Play click sound if not muted
+  const handleSlideBtnClick = () => {
+    if (isMuted) return;
+    const audio = slideBtnClickRef.current;
     if (audio) {
       audio.currentTime = 0;
       audio.play();
@@ -216,6 +227,7 @@ export default function ThreeStorySection() {
                   className="slide-btn"
                   href="#what-we-do"
                   onMouseEnter={handleSlideBtnMouseEnter}
+                  onClick={handleSlideBtnClick}
                 >
                   What We Do →
                 </a>
@@ -225,6 +237,7 @@ export default function ThreeStorySection() {
                   className="slide-btn"
                   href="#donate"
                   onMouseEnter={handleSlideBtnMouseEnter}
+                  onClick={handleSlideBtnClick}
                 >
                   Donate Us →
                 </a>
@@ -233,10 +246,15 @@ export default function ThreeStorySection() {
           </div>
         ))}
       </div>
-      {/* Slide button hover sound effect */}
+      {/* Slide button hover and click sound effects */}
       <audio
         ref={slideBtnHoverRef}
         src="/assets/button-hover-click.wav"
+        preload="auto"
+      />
+      <audio
+        ref={slideBtnClickRef}
+        src="/assets/old-computer-click.mp3"
         preload="auto"
       />
     </section>

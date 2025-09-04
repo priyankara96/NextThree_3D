@@ -5,9 +5,10 @@ import { useMusic } from "./MusicProvider";
 export default function MusicButton() {
   const { isMuted, toggleMute } = useMusic();
   const hoverAudioRef = useRef(null);
+  const clickAudioRef = useRef(null);
 
   const handleMouseEnter = () => {
-    if (isMuted) return; // <-- only play if NOT muted!
+    if (isMuted) return;
     const audio = hoverAudioRef.current;
     if (audio) {
       audio.currentTime = 0;
@@ -15,10 +16,22 @@ export default function MusicButton() {
     }
   };
 
+  const handleClick = () => {
+    if (!isMuted) {
+      // Play click sound only when unmuted (so mute/unmute stays consistent)
+      const audio = clickAudioRef.current;
+      if (audio) {
+        audio.currentTime = 0;
+        audio.play();
+      }
+    }
+    toggleMute(); // Now toggle mute/unmute
+  };
+
   return (
     <>
       <button
-        onClick={toggleMute}
+        onClick={handleClick}
         onMouseEnter={handleMouseEnter}
         style={{
           position: "fixed",
@@ -38,9 +51,16 @@ export default function MusicButton() {
       >
         {isMuted ? "🔇" : "🔊"}
       </button>
+      {/* Hover sound */}
       <audio
         ref={hoverAudioRef}
         src="/assets/button-hover-click.wav"
+        preload="auto"
+      />
+      {/* Click sound */}
+      <audio
+        ref={clickAudioRef}
+        src="/assets/old-computer-click.mp3"
         preload="auto"
       />
     </>
