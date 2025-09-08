@@ -33,7 +33,7 @@
   color: #6fd3f6;
 }
 .footer-link {
-  text-decoration: underline;
+  /* text-decoration: underline; */
   cursor: pointer;
   color: #fff;
 }

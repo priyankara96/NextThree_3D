@@ -2,12 +2,13 @@
 
 import React, { useRef, useLayoutEffect, useState } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { OrbitControls, useGLTF } from "@react-three/drei";
-import { useSpring, a } from "@react-spring/three";
+import { OrbitControls } from "@react-three/drei";
+import { useSpring } from "@react-spring/three";
+import { Road, Tree, ToyCar } from "./CarSceneModels";
 import { useMusic } from "./MusicProvider";
 import "./ThreeStorySection.css";
 
-// Camera steps array
+// Slides/camera positions
 const STEPS = [
   {
     camera: { position: [-9.25, 2.5, -2.38], fov: 50 },
@@ -41,17 +42,35 @@ const STEPS = [
   },
 ];
 
-// Linear interpolation for smooth transition
+// Linear interpolate for arrays
 function lerp(a, b, t) {
   return a.map((v, i) => v + (b[i] - v) * t);
 }
 
-// Car model loader
-function CarModel() {
-  const { scene } = useGLTF("/models/car.glb");
-  return <primitive object={scene} />;
+// Car scroll animation: always centered
+function useCarMotion(scrollT) {
+  // These values should match your Road mesh for perfect alignment:
+  const roadX = -2.937;
+  const roadWidth = 2.0 * -2; // Road is scaled by 5.892, assume base is width=2
+  const startX = roadX - roadWidth / 2 + 1.0; // Enter from left edge
+  const endX = roadX + roadWidth / 2 - 1.0; // Exit right edge
+  const carY = 1.62;
+  const carZ = 0.921;
+
+  // Animate from start to end across [0.05, 0.95] scroll
+  const moveStart = 0.05;
+  const moveEnd = 0.95;
+  let t = (scrollT - moveStart) / (moveEnd - moveStart);
+  t = Math.max(0, Math.min(1, t));
+  const carX = startX + (endX - startX) * t;
+
+  let opacity = 1;
+  if (scrollT > moveEnd) {
+    opacity = Math.max(1, 1 - (scrollT - moveEnd) * 8); // fade out quick after 95%
+  }
+
+  return [[carX, carY, carZ], opacity];
 }
-useGLTF.preload("/models/car.glb");
 
 // Camera animation for scroll
 function AnimatedCamera({ cameraPos, orbitTarget }) {
@@ -114,7 +133,7 @@ export default function ThreeStorySection() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Interpolate steps based on scrollT
+  // Camera interpolation
   const nSlides = STEPS.length;
   const exactStep = scrollT * (nSlides - 1);
   const i = Math.floor(exactStep);
@@ -132,7 +151,10 @@ export default function ThreeStorySection() {
     config: { mass: 1, tension: 120, friction: 32 },
   });
 
-  // Overlay: show the current step, simple
+  // Car motion logic
+  const [carPos, carOpacity] = useCarMotion(scrollT);
+
+  // Overlay: show the current step
   const showIdx = Math.round(exactStep);
 
   return (
@@ -146,13 +168,15 @@ export default function ThreeStorySection() {
           width: "100vw",
           height: "100vh",
           zIndex: 1,
-          pointerEvents: "none", // overlays/buttons on slides still work
+          pointerEvents: "none",
         }}
       >
         <Canvas camera={{ position: cameraPosArr, fov: 50 }}>
           <ambientLight intensity={1.2} />
           <directionalLight position={[5, 5, 5]} intensity={1} castShadow />
-          <CarModel />
+          <Road />
+          <Tree />
+          <ToyCar carPos={carPos} carOpacity={carOpacity} />
           <directionalLight
             position={[10, 10, 10]}
             intensity={1.5}
@@ -212,7 +236,7 @@ export default function ThreeStorySection() {
             {/* Content */}
             <div
               style={{
-                maxWidth: "700px",
+                maxWidth: "550px",
                 margin:
                   step.overlay.align === "left" ? "0 0 0 6vw" : "0 7vw 0 0",
                 zIndex: 1,
